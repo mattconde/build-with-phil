@@ -1,6 +1,8 @@
 const path = require("path");
 const context = process.cwd();
-const buildDir = path.resolve(context, "./build/");
+const buildDir = path.resolve(context, "./.build/");
+
+const WriteFilePlugin = require("write-file-webpack-plugin");
 
 const resourceCondition = {
   include: context,
@@ -13,8 +15,18 @@ module.exports = {
   entry: {
     "main.js": require.resolve("./index")
   },
+  plugins: [new WriteFilePlugin()],
   module: {
     rules: [
+      {
+        enforce: "post",
+        resource: [resourceCondition],
+        use: [
+          {
+            loader: require.resolve("./utils/emitFileLoader.js")
+          }
+        ]
+      },
       {
         resource: [{ test: /\.js$/ }, resourceCondition],
         use: [
