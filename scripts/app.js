@@ -13,7 +13,7 @@ const Container = styled.div`
 
 const App = () => (
   <Container>
-    <h1>Hello world</h1>
+    <h1>Hello world!!</h1>
   </Container>
 );
 

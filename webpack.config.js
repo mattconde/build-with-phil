@@ -2,6 +2,7 @@ const path = require("path");
 const context = process.cwd();
 const buildDir = path.resolve(context, "./.build/");
 
+const { HotModuleReplacementPlugin } = require("webpack");
 const WriteFilePlugin = require("write-file-webpack-plugin");
 
 const resourceCondition = {
@@ -13,9 +14,12 @@ module.exports = {
   context,
   mode: "development",
   entry: {
-    "main.js": require.resolve("./index")
+    "main.js": [
+      "webpack-hot-middleware/client?overlay=true&path=/_build/hmr",
+      require.resolve("./index")
+    ]
   },
-  plugins: [new WriteFilePlugin()],
+  plugins: [new HotModuleReplacementPlugin(), new WriteFilePlugin()],
   module: {
     rules: [
       {
@@ -33,7 +37,8 @@ module.exports = {
           {
             loader: require.resolve("babel-loader"),
             query: {
-              presets: ["@babel/preset-env", "@babel/preset-react"]
+              presets: ["@babel/preset-env", "@babel/preset-react"],
+              plugins: ["react-hot-loader/babel"]
             }
           }
         ]

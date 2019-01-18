@@ -3,6 +3,7 @@ const path = require("path");
 const express = require("express");
 const webpack = require("webpack");
 const webpackDevMiddleware = require("webpack-dev-middleware");
+const webpackHotMiddleware = require("webpack-hot-middleware");
 const { renderToString } = require("react-dom/server");
 const { createElement } = require("react");
 const { ServerStyleSheet } = require("styled-components");
@@ -16,8 +17,13 @@ const devMiddleware = webpackDevMiddleware(compiler, {
   index: false,
   publicPath: "/_build/"
 });
+const hotMiddleware = webpackHotMiddleware(compiler, {
+  path: "/_build/hmr"
+});
+
 purgeRequireCache(compiler);
 
+app.use(hotMiddleware);
 app.use(devMiddleware);
 
 let isValid = false;
