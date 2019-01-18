@@ -6,6 +6,7 @@ const webpackDevMiddleware = require("webpack-dev-middleware");
 const { renderToString } = require("react-dom/server");
 const { createElement } = require("react");
 const { ServerStyleSheet } = require("styled-components");
+const { purgeRequireCache } = require("./utils/purgeRequireCache");
 
 const app = express();
 
@@ -15,6 +16,9 @@ const devMiddleware = webpackDevMiddleware(compiler, {
   index: false,
   publicPath: "/_build/"
 });
+purgeRequireCache(compiler);
+
+app.use(devMiddleware);
 
 let isValid = false;
 const waitUntilValid = new Promise(resolve => {
@@ -32,7 +36,6 @@ app.use((req, res, next) => {
   waitUntilValid.then(() => next());
 });
 
-app.use(devMiddleware);
 app.get("*", (req, res) => {
   const App = require(path.join(
     webpackConfig.output.path,
