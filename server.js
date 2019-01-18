@@ -1,3 +1,4 @@
+const fs = require("fs");
 const express = require("express");
 const webpack = require("webpack");
 const webpackDevMiddleware = require("webpack-dev-middleware");
@@ -11,3 +12,11 @@ const devMiddleware = webpackDevMiddleware(compiler, {
 });
 
 app.use(devMiddleware);
+app.get("*", (req, res) => {
+  const template = fs.readFileSync("./index.html", { encoding: "utf8" });
+  res.send(template.replace("%REACT_HTML%", ""));
+});
+
+app.listen(3003, () => {
+  console.log("> Fire up the server");
+});
