@@ -5,6 +5,7 @@ const webpack = require("webpack");
 const webpackDevMiddleware = require("webpack-dev-middleware");
 const { renderToString } = require("react-dom/server");
 const { createElement } = require("react");
+const { ServerStyleSheet } = require("styled-components");
 
 const app = express();
 
@@ -37,9 +38,11 @@ app.get("*", (req, res) => {
     webpackConfig.output.path,
     "server/scripts/app.js"
   ));
-  const html = renderToString(createElement(App.default));
+  const sheet = new ServerStyleSheet();
+  const html = renderToString(sheet.collectStyles(createElement(App.default)));
   const template = fs.readFileSync("./index.html", { encoding: "utf8" });
-  res.send(template.replace("%REACT_HTML%", html));
+  const css = sheet.getStyleTags();
+  res.send(template.replace("%REACT_HTML%", html).replace("%STYLE_HTML%", css));
 });
 
 app.listen(3003, () => {
